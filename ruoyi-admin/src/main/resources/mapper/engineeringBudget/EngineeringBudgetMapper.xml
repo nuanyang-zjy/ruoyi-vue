@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.engineeringBudget.mapper.EngineeringBudgetMapper">
+    
+    <resultMap type="EngineeringBudget" id="EngineeringBudgetResult">
+        <result property="budgetId"    column="budget_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="level"    column="level"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="tunnelCost"    column="tunnel_cost"    />
+        <result property="buildingCost"    column="building_cost"    />
+        <result property="installationCost"    column="installation_cost"    />
+        <result property="equipmentCost"    column="equipment_cost"    />
+        <result property="otherCost"    column="other_cost"    />
+        <result property="totalCost"    column="total_cost"    />
+        <result property="projectStatus"    column="project_status"    />
+        <result property="description"    column="description"    />
+        <result property="createdTime"    column="created_time"    />
+        <result property="updatedTime"    column="updated_time"    />
+    </resultMap>
+
+
+
+    <resultMap id="EngineeringBudgetTree" type="EngineeringBudgetTree">
+        <result property="budgetId"    column="budget_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="level"    column="level"    />
+        <result property="projectName"    column="project_name"    />
+    </resultMap>
+
+
+
+    <sql id="selectEngineeringBudgetVo">
+        select budget_id, parent_id, level, project_name, tunnel_cost, building_cost, installation_cost, equipment_cost, other_cost, total_cost, project_status, description, created_time, updated_time from engineering_budget
+    </sql>
+
+
+    <sql id="EngineeringTreeVo">
+        select budget_id,parent_id, level, project_name from engineering_budget
+    </sql>
+
+    <select id="selectEngineeringBudgetTree"  resultMap="EngineeringBudgetTree">
+        <include refid="EngineeringTreeVo"></include>
+    </select>
+
+
+
+
+    <select id="selectEngineeringBudgetList" parameterType="SelectParam" resultMap="EngineeringBudgetResult">
+        <include refid="selectEngineeringBudgetVo"/>
+        <where>  
+          <if test="projectName != null and projectName != ''" >and project_name like concat('%',#{projectName},'%')</if>
+          <if test="beginTunnelCost != null and beginTunnelCost != '' and endTunnelCost != null and endTunnelCost != ''"> and tunnel_cost between #{beginTunnelCost} and #{endTunnelCost}</if>
+          <if test="beginBuildingCost != null and beginBuildingCost != '' and endBuildingCost != null and endBuildingCost != ''">  and building_cost between #{beginBuildingCost} and #{endBuildingCost}</if>
+          <if test="beginInstallationCost != null and beginInstallationCost != '' and endInstallationCost != null and endInstallationCost != ''">  and installation_cost between #{beginInstallationCost} and #{endInstallationCost}</if>
+          <if test="beginEquipmentCost != null and beginEquipmentCost != '' and endEquipmentCost != null and endEquipmentCost != ''">   and equipment_cost between #{beginEquipmentCost} and #{endEquipmentCost}</if>
+          <if test="beginOtherCost != null and beginOtherCost != '' and endOtherCost != null and endOtherCost != ''">  and other_cost between #{beginOtherCost} and #{endOtherCost}</if>
+          <if test="beginTotalCost != null and beginTotalCost != '' and endTotalCost != null and endTotalCost != ''">  and total_cost between #{beginTotalCost} and #{endTotalCost}</if>
+          <if test="projectStatus != null  and projectStatus != ''">   and project_status = #{projectStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectAll" resultMap="EngineeringBudgetResult">
+            <include refid="selectEngineeringBudgetVo"/>
+    </select>
+
+    <select id="selectEngineeringBudgetByBudgetId" parameterType="Integer" resultMap="EngineeringBudgetResult">
+        <include refid="selectEngineeringBudgetVo"/>
+        where budget_id = #{budgetId}
+    </select>
+
+    <insert id="insertEngineeringBudget" parameterType="EngineeringBudget" useGeneratedKeys="true" keyProperty="budgetId">
+        insert into engineering_budget
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">parent_id,</if>
+            <if test="level != null">level,</if>
+            <if test="projectName != null and projectName != ''">project_name,</if>
+            <if test="tunnelCost != null">tunnel_cost,</if>
+            <if test="buildingCost != null">building_cost,</if>
+            <if test="installationCost != null">installation_cost,</if>
+            <if test="equipmentCost != null">equipment_cost,</if>
+            <if test="otherCost != null">other_cost,</if>
+            <if test="totalCost != null">total_cost,</if>
+            <if test="projectStatus != null and projectStatus != ''">project_status,</if>
+            <if test="description != null">description,</if>
+            <if test="createdTime != null">created_time,</if>
+            <if test="updatedTime != null">updated_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">#{parentId},</if>
+            <if test="level != null">#{level},</if>
+            <if test="projectName != null and projectName != ''">#{projectName},</if>
+            <if test="tunnelCost != null">#{tunnelCost},</if>
+            <if test="buildingCost != null">#{buildingCost},</if>
+            <if test="installationCost != null">#{installationCost},</if>
+            <if test="equipmentCost != null">#{equipmentCost},</if>
+            <if test="otherCost != null">#{otherCost},</if>
+            <if test="totalCost != null">#{totalCost},</if>
+            <if test="projectStatus != null and projectStatus != ''">#{projectStatus},</if>
+            <if test="description != null">#{description},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEngineeringBudget" parameterType="EngineeringBudget">
+        update engineering_budget
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="level != null">level = #{level},</if>
+            <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
+            <if test="tunnelCost != null">tunnel_cost = #{tunnelCost},</if>
+            <if test="buildingCost != null">building_cost = #{buildingCost},</if>
+            <if test="installationCost != null">installation_cost = #{installationCost},</if>
+            <if test="equipmentCost != null">equipment_cost = #{equipmentCost},</if>
+            <if test="otherCost != null">other_cost = #{otherCost},</if>
+            <if test="totalCost != null">total_cost = #{totalCost},</if>
+            <if test="projectStatus != null and projectStatus != ''">project_status = #{projectStatus},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="createdTime != null">created_time = #{createdTime},</if>
+            <if test="updatedTime != null">updated_time = #{updatedTime},</if>
+        </trim>
+        where budget_id = #{budgetId}
+    </update>
+
+    <update id="updateSync" parameterType="EngineeringBudget">
+        update engineering_budget
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelCost != null">tunnel_cost = tunnel_cost+#{tunnelCost},</if>
+            <if test="buildingCost != null">building_cost =building_cost+#{buildingCost},</if>
+            <if test="installationCost != null">installation_cost =installation_cost+#{installationCost},</if>
+            <if test="equipmentCost != null">equipment_cost = equipment_cost+#{equipmentCost},</if>
+            <if test="otherCost != null">other_cost = other_cost+#{otherCost},</if>
+            <if test="totalCost != null">total_cost = total_cost+#{totalCost},</if>
+        </trim>
+        where budget_id = #{budgetId}
+    </update>
+
+    <delete id="deleteEngineeringBudgetByBudgetId" parameterType="Long">
+        delete from engineering_budget where budget_id = #{budgetId}
+    </delete>
+
+
+
+    <delete id="deleteEngineeringBudgetByBudgetIds" parameterType="String">
+        delete from engineering_budget where budget_id in 
+        <foreach item="budgetId" collection="array" open="(" separator="," close=")">
+            #{budgetId}
+        </foreach>
+    </delete>
+</mapper>
